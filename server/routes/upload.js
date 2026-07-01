@@ -9,12 +9,24 @@ const router = Router()
 
 router.post('/current', upload.single('file'), async (request, response, next) => {
   try {
-    if (!request.file) return response.status(400).json({ error: 'Selecione um arquivo .xlsx para enviar.' })
+    if (!request.file) {
+      const message = 'Nenhum arquivo Excel foi enviado.'
+      return response.status(400).json({ success: false, message, error: message })
+    }
     const { imported, tickets } = processExcelBuffer(request.file.buffer)
-    if (!tickets.length) return response.status(400).json({ error: 'A planilha não contém linhas de tickets válidas.' })
+    if (!tickets.length) {
+      const message = 'A planilha não contém linhas de tickets válidas.'
+      return response.status(400).json({ success: false, message, error: message })
+    }
     const metadata = await saveCurrent(request.file.buffer, tickets, request.file.originalname, imported)
     setCurrent({ tickets, ...metadata })
-    response.status(201).json({ message: 'Excel carregado com sucesso.', ...metadata, summary: summarize(tickets) })
+    response.status(201).json({
+      success: true,
+      message: 'Excel carregado com sucesso.',
+      filename: metadata.fileName,
+      ...metadata,
+      summary: summarize(tickets)
+    })
   } catch (error) {
     next(error)
   }
@@ -24,7 +36,7 @@ router.delete('/current', async (_request, response, next) => {
   try {
     await removeCurrent()
     clearCurrent()
-    response.json({ message: 'Excel atual e cache removidos.' })
+    response.json({ success: true, message: 'Excel removido com sucesso.' })
   } catch (error) {
     next(error)
   }

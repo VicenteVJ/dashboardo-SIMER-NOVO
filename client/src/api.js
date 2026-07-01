@@ -1,10 +1,14 @@
 const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
 
+export function apiUrl(path) {
+  return `${API_BASE}${path}`
+}
+
 async function request(path, options = {}) {
-  const response = await fetch(`${API_BASE}${path}`, options)
+  const response = await fetch(apiUrl(path), options)
   const contentType = response.headers.get('content-type') || ''
   const payload = contentType.includes('application/json') ? await response.json() : await response.text()
-  if (!response.ok) throw new Error(payload?.error || 'Não foi possível concluir a operação.')
+  if (!response.ok) throw new Error(payload?.message || payload?.error || 'Não foi possível concluir a operação.')
   return payload
 }
 
@@ -25,5 +29,5 @@ export const api = {
     formData.append('newFile', newFile)
     return request('/api/compare', { method: 'POST', body: formData })
   },
-  exportUrl: (path, query = '') => `${API_BASE}${path}${query ? `?${query}` : ''}`
+  exportUrl: (path, query = '') => `${apiUrl(path)}${query ? `?${query}` : ''}`
 }

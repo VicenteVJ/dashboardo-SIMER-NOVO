@@ -4,7 +4,7 @@ import path from 'node:path'
 function excelFileFilter(_request, file, callback) {
   const extension = path.extname(file.originalname || '').toLowerCase()
   if (extension !== '.xlsx') {
-    const error = new Error('Envie um arquivo Excel no formato .xlsx.')
+    const error = new Error('Envie um arquivo .xlsx válido.')
     error.status = 400
     callback(error)
     return

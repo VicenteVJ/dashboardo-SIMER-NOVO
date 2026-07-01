@@ -31,7 +31,15 @@ npm install
 npm run dev
 ```
 
-Abra `http://localhost:5173`. O backend é iniciado em `http://localhost:3001` e o Vite encaminha as chamadas `/api` automaticamente.
+Abra `http://localhost:8888`. O Netlify Dev inicia o Vite e as Functions localmente, aplicando os mesmos redirects de produção. As chamadas públicas continuam em `/api/*`.
+
+Para usar o servidor Express e o proxy do Vite sem o Netlify Dev:
+
+```bash
+npm run dev:local
+```
+
+Nesse modo, o frontend abre em `http://localhost:5173`, o backend em `http://localhost:3001` e o Vite encaminha `/api`.
 
 Para simular a entrega de produção interna:
 
@@ -46,8 +54,10 @@ Variáveis opcionais podem ser configuradas com base no arquivo `.env.example`:
 
 - `PORT`: porta do backend, padrão `3001`;
 - `CLIENT_ORIGIN`: origens permitidas pelo CORS, separadas por vírgula;
-- `VITE_API_URL`: URL absoluta da API quando frontend e backend estiverem em hosts diferentes;
-- `STORAGE_DIR`: diretório alternativo para o cache, útil em testes e implantação.
+- `VITE_API_URL`: URL absoluta da API quando frontend e backend estiverem em hosts diferentes; no Netlify deve ficar vazia para usar `/api/*` no mesmo domínio;
+- `STORAGE_DIR`: diretório alternativo para o cache no modo filesystem local e nos testes;
+- `NETLIFY` ou `NETLIFY_DEV`: quando presentes, habilitam o Netlify Blobs, salvo se `STORAGE_DIR` tiver sido definido explicitamente;
+- `NETLIFY_BLOBS_STORE`: nome opcional do store; o padrão é `simer-dashboard-cache`.
 
 > O projeto não carrega `.env` automaticamente. Defina as variáveis no ambiente do processo ou adicione um carregador de segredos na plataforma de implantação.
 
@@ -61,17 +71,32 @@ Variáveis opcionais podem ser configuradas com base no arquivo `.env.example`:
 
 Datas no formato brasileiro `DD/MM/YYYY HH:mm` são interpretadas explicitamente, sem depender do parser americano do JavaScript. Datas inválidas são mantidas vazias. Campos textuais ausentes aparecem como `(vazio)`.
 
-## Persistência local
+## Persistência
 
-Por padrão, os arquivos ficam em `server/storage/`:
+Localmente, no modo Express tradicional, os arquivos ficam em `server/storage/` (ou no diretório definido por `STORAGE_DIR`). No Netlify, a mesma camada de persistência usa um store site-wide do Netlify Blobs; portanto o cache não depende do filesystem efêmero da Function e permanece disponível após recarregar a página e após novos deploys.
+
+As chaves/arquivos mantidos são:
 
 - `current.xlsx`: último Excel carregado;
-- `current.json`: cache processado carregado na inicialização do servidor;
+- `current.json`: cache processado;
 - `current.raw.json`: snapshot bruto da etapa de importação para rastreabilidade de novas cargas;
+- `current-metadata.json`: nome original, horário da carga e total de tickets;
 - `old.xlsx` e `new.xlsx`: últimos arquivos comparados;
 - `comparison.json`: resultado da última comparação.
 
-O aging e os indicadores enriquecidos são recalculados ao consultar o cache, portanto continuam corretos com a passagem dos dias. Caches criados por versões anteriores são enriquecidos automaticamente em memória. **Remover Excel** apaga o Excel e todos os snapshots da carga atual.
+O Excel original é armazenado sem alteração. O aging e os indicadores enriquecidos são recalculados ao consultar o cache, portanto continuam corretos com a passagem dos dias. Caches criados por versões anteriores são enriquecidos automaticamente em memória. **Remover Excel** apaga o Excel, o JSON processado, o snapshot bruto e os metadados da carga atual.
+
+## Deploy no Netlify
+
+O arquivo `netlify.toml` da raiz já contém build, diretório de Functions e redirects. No painel do Netlify, mantenha:
+
+- Base directory: vazio;
+- Package directory: vazio;
+- Build command: `npm --prefix client run build`;
+- Publish directory: `client/dist`;
+- Functions directory: `netlify/functions`.
+
+O frontend é publicado como SPA e `/api/*` é reescrito para a Function `api`. Não é necessário backend externo nem banco de dados. O contexto de acesso ao Netlify Blobs é fornecido automaticamente à Function pelo Netlify.
 
 ## Endpoints
 
@@ -87,6 +112,8 @@ O aging e os indicadores enriquecidos são recalculados ao consultar o cache, po
 | GET | `/api/export/filtered` | CSV dos tickets filtrados |
 | GET | `/api/export/comparison` | CSV da última comparação |
 
+Em produção, os mesmos endpoints são atendidos por `netlify/functions/api.js`; seus endereços públicos não mudam.
+
 Filtros aceitos em `/api/tickets`, `/api/summary` e `/api/export/filtered`: `search`, `status` (valores separados por vírgula), `departamento`, `clientePessoa`, `categoria`, `servico`, `responsavel`, `prioridade`, `ano`, `mes`, `somenteAberto`, `aging`, `categoriaGrupo`, `indicador`, `statusGerencial`, `tipoITIL`, `prioridadeGerencial`, `situacaoSLA`, `nivelRisco`, `responsavelGerencial`, `dependenciaExterna`, `semAtualizacao`, `motivoEsperaInferido`, `quadranteEisenhower` e `governanca`.
 
 O CSV identifica cada coluna com os prefixos `[Excel]` e `[Calculado]`. Respostas grandes da API usam compressão HTTP para manter a carga rápida com milhares de registros.
@@ -100,6 +127,8 @@ server/
   middleware/   validação multipart
   utils/        datas e texto
   storage/      cache local (ignorado pelo Git)
+netlify/
+  functions/    entrada serverless que reutiliza o app Express
 client/src/
   components/   layout, filtros, gráficos, tabelas e modais
   context/      carga e atualização da base
@@ -114,4 +143,4 @@ npm run check
 npm audit
 ```
 
-Os testes criam arquivos Excel reais em diretórios temporários e cobrem normalização de cabeçalhos, datas brasileiras, regras de negócio, upload multipart, CORS, filtros, resumo, CSV, comparação e restauração do cache após reiniciar o processo.
+Os testes criam arquivos Excel reais em diretórios temporários e cobrem normalização de cabeçalhos, datas brasileiras, regras de negócio, upload multipart em memória, CORS, filtros, resumo, CSV, comparação e restauração do cache após reiniciar o processo.

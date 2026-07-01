@@ -20,7 +20,10 @@ router.get('/filtered', (request, response) => {
 router.get('/comparison', async (_request, response, next) => {
   try {
     const comparison = await loadComparison()
-    if (!comparison) return response.status(404).json({ error: 'Faça uma comparação antes de exportar.' })
+    if (!comparison) {
+      const message = 'Faça uma comparação antes de exportar.'
+      return response.status(404).json({ success: false, message, error: message })
+    }
     sendCsv(response, 'comparacao-tickets.csv', comparisonToCsv(comparison))
   } catch (error) {
     next(error)

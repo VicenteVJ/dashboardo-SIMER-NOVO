@@ -5,3 +5,7 @@ client/dist/
 server/storage/*.xlsx
 server/storage/*.json
 !server/storage/.gitkeep
+
+# Local Netlify folder
+.netlify
+deno.lock
