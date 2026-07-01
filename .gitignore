@@ -1,0 +1,7 @@
+node_modules/
+client/dist/
+.env
+*.log
+server/storage/*.xlsx
+server/storage/*.json
+!server/storage/.gitkeep

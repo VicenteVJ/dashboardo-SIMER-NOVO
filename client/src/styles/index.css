@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { @apply border-slate-200 dark:border-slate-700; }
+  body { @apply m-0 bg-canvas font-sans text-ink antialiased dark:bg-slate-950 dark:text-slate-100; font-family: Inter, system-ui, sans-serif; }
+  button, input, select { font: inherit; }
+}
+
+@layer components {
+  .card { @apply rounded-xl border border-white/80 bg-white p-4 shadow-card dark:border-slate-800 dark:bg-slate-900; }
+  .btn { @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-primary { @apply btn bg-brand text-white hover:bg-blue-600; }
+  .btn-secondary { @apply btn border bg-white text-slate-700 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800; }
+  .field { @apply w-full rounded-lg border bg-white px-3 py-2 text-xs outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/15 dark:bg-slate-900; }
+  .badge { @apply inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold; }
+}
+
+.thin-scrollbar { scrollbar-width: thin; scrollbar-color: #a5b4fc transparent; }
+.recharts-default-tooltip { border-radius: 12px !important; border-color: #e2e8f0 !important; }
