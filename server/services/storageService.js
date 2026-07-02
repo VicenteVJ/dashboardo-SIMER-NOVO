@@ -28,13 +28,15 @@ const keys = {
 }
 
 const paths = Object.fromEntries(Object.entries(keys).map(([name, key]) => [name, path.join(storageDir, key)]))
-let storePromise
+let blobsModulePromise
 
 async function getBlobStore() {
-  if (!storePromise) {
-    storePromise = import('@netlify/blobs').then(({ getStore }) => getStore(STORE_NAME))
-  }
-  return storePromise
+  // The Lambda compatibility token is refreshed for every invocation by
+  // connectLambda. A Store instance must not outlive that invocation because
+  // it retains the token that was active when it was created.
+  if (!blobsModulePromise) blobsModulePromise = import('@netlify/blobs')
+  const { getStore } = await blobsModulePromise
+  return getStore(STORE_NAME)
 }
 
 function blobError(error) {
