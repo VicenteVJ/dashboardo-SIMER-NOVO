@@ -15,12 +15,10 @@ export default function Sidebar({ open, onClose }) {
     <aside className={`fixed inset-y-0 left-0 z-50 flex w-[220px] flex-col overflow-hidden bg-slate-950 px-3 py-3 text-white transition-transform lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
       <button className="absolute right-4 top-4 text-2xl text-slate-400 lg:hidden" onClick={onClose}>×</button>
       <div className="rounded-xl bg-gradient-to-br from-brand to-violet p-2 shadow-lg">
-        <div className="flex items-center gap-2">
-          <div className="relative h-12 w-28 shrink-0 overflow-hidden">
-            <img src={simerLogo} alt="ERP Simer" className="absolute left-0 top-1/2 w-28 max-w-none -translate-y-1/2" />
-          </div>
-          <h1 className="text-xs font-extrabold leading-tight">Dashboard de Chamados</h1>
+        <div className="relative h-12 w-28 overflow-hidden">
+          <img src={simerLogo} alt="ERP Simer" className="absolute left-0 top-1/2 w-28 max-w-none -translate-y-1/2" />
         </div>
+        <h1 className="mt-1 text-sm font-extrabold leading-tight">Dashboard de Chamados</h1>
       </div>
 
       <nav className="mt-3 space-y-0.5">
