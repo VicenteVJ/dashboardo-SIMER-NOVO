@@ -53,7 +53,7 @@ Nesse modo, o Express entrega o frontend compilado em `http://localhost:3001`.
 Variáveis opcionais podem ser configuradas com base no arquivo `.env.example`:
 
 - `PORT`: porta do backend, padrão `3001`;
-- `CLIENT_ORIGIN`: origens permitidas pelo CORS, separadas por vírgula;
+- `CLIENT_ORIGIN` e `ALLOWED_ORIGINS`: origens adicionais permitidas pelo CORS, com múltiplos valores separados por vírgula;
 - `VITE_API_URL`: URL absoluta da API quando frontend e backend estiverem em hosts diferentes; no Netlify deve ficar vazia para usar `/api/*` no mesmo domínio;
 - `STORAGE_DIR`: diretório alternativo para o cache no modo filesystem local e nos testes;
 - `NETLIFY` ou `NETLIFY_DEV`: quando presentes, habilitam o Netlify Blobs, salvo se `STORAGE_DIR` tiver sido definido explicitamente;
@@ -97,6 +97,14 @@ O arquivo `netlify.toml` da raiz já contém build, diretório de Functions e re
 - Functions directory: `netlify/functions`.
 
 O frontend é publicado como SPA e `/api/*` é reescrito para a Function `api`. Não é necessário backend externo nem banco de dados. O contexto de acesso ao Netlify Blobs é fornecido automaticamente à Function pelo Netlify.
+
+O domínio oficial `https://dashboardo-simer-novo.netlify.app`, a variante sem o segundo “o”, localhost e deploy previews/branch deploys desses sites já são permitidos pelo CORS. Variáveis são opcionais e servem para acrescentar outros hosts, por exemplo:
+
+```text
+CLIENT_ORIGIN=https://dashboardo-simer-novo.netlify.app,https://dashboard-simer-novo.netlify.app
+```
+
+No painel do Netlify, deixe **Base directory** e **Package directory** vazios para que o build encontre tanto o frontend quanto `netlify/functions` e as dependências da raiz.
 
 ## Endpoints
 

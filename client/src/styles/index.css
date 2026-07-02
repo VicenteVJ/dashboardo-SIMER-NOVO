@@ -16,6 +16,32 @@
   .btn-secondary { @apply btn border bg-white text-slate-700 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800; }
   .field { @apply w-full rounded-lg border bg-white px-3 py-2 text-xs outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/15 dark:bg-slate-900; }
   .badge { @apply inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold; }
+
+  .metric-grid {
+    --metric-min: 250px;
+    --metric-max: 280px;
+    --metric-gap: 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--metric-min)), var(--metric-max)));
+    justify-content: start;
+    gap: var(--metric-gap);
+  }
+
+  .metric-grid > * {
+    width: 100%;
+    max-width: var(--metric-max);
+  }
+
+  .metric-grid--compact { --metric-min: 240px; --metric-max: 300px; --metric-gap: 0.75rem; }
+  .metric-grid--mini { --metric-min: 180px; --metric-max: 240px; --metric-gap: 0.75rem; }
+  .metric-grid--aging { --metric-min: 220px; --metric-max: 280px; --metric-gap: 0.75rem; }
+  .metric-grid--eisenhower { --metric-min: 220px; --metric-max: 300px; --metric-gap: 0.75rem; }
+  .metric-grid--pareto { --metric-min: 190px; --metric-max: 240px; --metric-gap: 0.625rem; }
+
+  @media (max-width: 639px) {
+    .metric-grid { grid-template-columns: minmax(0, 1fr); }
+    .metric-grid > * { max-width: none; }
+  }
 }
 
 .thin-scrollbar { scrollbar-width: thin; scrollbar-color: #a5b4fc transparent; }

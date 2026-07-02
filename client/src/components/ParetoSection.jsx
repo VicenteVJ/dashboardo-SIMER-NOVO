@@ -1,6 +1,7 @@
 import { memo, useMemo, useState } from 'react'
 import { Bar, CartesianGrid, Cell, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { buildParetoView, PARETO_VIEW_DIMENSIONS } from '../utils/management'
+import MetricGrid from './MetricGrid'
 
 function ParetoSection({ tickets, onFilter }) {
   const [dimension, setDimension] = useState('cliente')
@@ -12,9 +13,9 @@ function ParetoSection({ tickets, onFilter }) {
   const focus = [analyses.cliente.all[0]?.name, analyses.servico.all[0]?.name, analyses.categoria.all[0]?.name].filter(Boolean).join(', ')
   return <section className="space-y-3">
     <div><div className="flex items-center gap-2"><h2 className="text-sm font-bold">Análise de Pareto 80/20</h2><span className="cursor-help text-xs text-violet" title="Grupos ordenados por volume; o conjunto Pareto inclui os ofensores até atingir aproximadamente 80% do backlog.">ⓘ</span></div><p className="mt-0.5 text-[10px] text-muted">Grupos que concentram a maior parte do backlog e demandam atenção gerencial.</p></div>
-    <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-5">
+    <MetricGrid variant="pareto">
       {cards.map((card) => <button key={card.key} onClick={() => setDimension(card.key)} className={`card p-3 text-left transition hover:border-brand ${dimension === card.key ? 'ring-2 ring-brand' : ''}`}><p className="text-[9px] font-bold uppercase text-muted">{card.label} no Pareto</p><strong className="mt-1.5 block text-xl">{card.value}</strong><span className="text-[9px] text-muted">concentram ~80%</span></button>)}
-    </div>
+    </MetricGrid>
     <div className="grid gap-4 xl:grid-cols-[1.55fr_1fr]">
       <div className="card">
         <div className="flex flex-wrap items-center justify-between gap-2"><div><h3 className="text-sm font-bold">Pareto por {PARETO_VIEW_DIMENSIONS[dimension].label.toLowerCase()}</h3><p className="mt-0.5 text-[10px] text-muted">Barras: tickets · Linha: percentual acumulado.</p></div><div className="flex flex-wrap gap-1">{Object.entries(PARETO_VIEW_DIMENSIONS).map(([key, config]) => <button key={key} onClick={() => setDimension(key)} className={dimension === key ? 'btn-primary px-2.5 py-1.5 text-[10px]' : 'btn-secondary px-2.5 py-1.5 text-[10px]'}>{config.label}</button>)}</div></div>

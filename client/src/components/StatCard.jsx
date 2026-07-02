@@ -4,9 +4,9 @@ export default function StatCard({ label, value, note, tone = 'blue', onClick, a
     amber: 'from-amber-400 to-orange-500', green: 'from-emerald-400 to-green-600', slate: 'from-slate-500 to-slate-700'
   }
   const densities = {
-    default: 'min-h-[112px] p-4',
-    compact: 'min-h-[96px] p-3',
-    mini: 'min-h-[76px] p-3'
+    default: 'min-h-[112px] max-w-[340px] p-4',
+    compact: 'min-h-[96px] max-w-[320px] p-3',
+    mini: 'min-h-[76px] max-w-[240px] p-3'
   }
   const Tag = onClick ? 'button' : 'div'
   return (

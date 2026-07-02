@@ -1,18 +1,15 @@
 import path from 'node:path'
 import compression from 'compression'
-import cors from 'cors'
 import express from 'express'
+import { corsMiddleware } from './middleware/cors.js'
 import comparisonRouter from './routes/comparison.js'
 import exportRouter from './routes/export.js'
 import ticketsRouter from './routes/tickets.js'
 import uploadRouter from './routes/upload.js'
 import { filterTickets, summarize } from './services/filterService.js'
-import { isNetlify } from './services/storageService.js'
 import { getCurrent, hydrateCurrent } from './state.js'
 
 const app = express()
-const configuredOrigins = String(process.env.CLIENT_ORIGIN || 'http://localhost:5173,http://127.0.0.1:5173')
-  .split(',').map((origin) => origin.trim()).filter(Boolean)
 const apiRoots = ['/health', '/upload', '/tickets', '/summary', '/compare', '/export']
 
 app.use((request, _response, next) => {
@@ -30,17 +27,8 @@ app.use((request, _response, next) => {
   next()
 })
 
+app.use(corsMiddleware)
 app.use(compression())
-app.use(cors({
-  origin: isNetlify ? '*' : (origin, callback) => {
-    if (!origin || configuredOrigins.includes(origin)) return callback(null, true)
-    const error = new Error('Origem não autorizada pelo CORS.')
-    error.status = 403
-    callback(error)
-  },
-  methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type']
-}))
 app.use(express.json({ limit: '1mb' }))
 app.use('/api', async (_request, _response, next) => {
   await hydrateCurrent()

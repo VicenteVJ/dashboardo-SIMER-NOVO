@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api'
+import MetricGrid from '../components/MetricGrid'
 import StatCard from '../components/StatCard'
 import { useData } from '../context/DataContext'
 import { formatDate, movideskTicketUrl, statusTone } from '../utils/tickets'
@@ -139,15 +140,15 @@ export default function ComparePage() {
       </section>
 
       {result && <>
-        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
+        <MetricGrid>
           <StatCard label="Novos tickets" value={result.counts.novos} note="Existe só no novo" tone="green" active={view === 'novo'} onClick={() => setView('novo')} />
           <StatCard label="Tickets removidos" value={result.counts.removidos} note="Existe só no velho" tone="red" active={view === 'removido'} onClick={() => setView('removido')} />
           <StatCard label="Tickets alterados" value={result.counts.alterados} note="Mesmo número, campos mudaram" tone="amber" active={view === 'alterado'} onClick={() => setView('alterado')} />
           <StatCard label="Total comparado" value={result.counts.totalComparado} note="União entre velho e novo" tone="blue" active={view === 'all'} onClick={() => setView('all')} />
           <StatCard label="Ver somente alterados" value="⇄" note="Aplicar filtro" tone="amber" active={view === 'alterado'} onClick={() => setView('alterado')} />
           <StatCard label="Ver tudo" value="∞" note="Remover filtro de tipo" tone="blue" active={view === 'all'} onClick={() => setView('all')} />
-        </section>
-        <section><div className="mb-3"><h2 className="font-bold">Impacto gerencial da mudança</h2><p className="mt-1 text-xs text-muted">Classificações inferidas pelo sistema nos dois snapshots.</p></div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6"><StatCard inferred label="Novos críticos" value={result.counts.novosCriticos} note="Novo P1/P2 ou risco crítico" tone="red" active={view === 'novo-critico'} onClick={() => setView('novo-critico')} /><StatCard inferred label="Pioraram risco" value={result.counts.pioraramRisco} note="Score aumentou no novo" tone="red" active={view === 'piorou-risco'} onClick={() => setView('piorou-risco')} /><StatCard inferred label="Melhoraram risco" value={result.counts.melhoraramRisco} note="Score diminuiu no novo" tone="green" active={view === 'melhorou-risco'} onClick={() => setView('melhorou-risco')} /><StatCard inferred label="Venceram SLA" value={result.counts.venceramSLA} note="Passaram para vencido" tone="amber" active={view === 'venceu-sla'} onClick={() => setView('venceu-sla')} /><StatCard inferred label="Saíram de aguardando" value={result.counts.sairamAguardando} note="Deixaram o estado de espera" tone="blue" active={view === 'saiu-aguardando'} onClick={() => setView('saiu-aguardando')} /><StatCard inferred label="Resolvidos no novo" value={result.counts.resolvidosNoNovo} note="Passaram para encerrado" tone="green" active={view === 'resolvido'} onClick={() => setView('resolvido')} /></div></section>
+        </MetricGrid>
+        <section><div className="mb-3"><h2 className="font-bold">Impacto gerencial da mudança</h2><p className="mt-1 text-xs text-muted">Classificações inferidas pelo sistema nos dois snapshots.</p></div><MetricGrid variant="compact"><StatCard inferred label="Novos críticos" value={result.counts.novosCriticos} note="Novo P1/P2 ou risco crítico" tone="red" active={view === 'novo-critico'} onClick={() => setView('novo-critico')} /><StatCard inferred label="Pioraram risco" value={result.counts.pioraramRisco} note="Score aumentou no novo" tone="red" active={view === 'piorou-risco'} onClick={() => setView('piorou-risco')} /><StatCard inferred label="Melhoraram risco" value={result.counts.melhoraramRisco} note="Score diminuiu no novo" tone="green" active={view === 'melhorou-risco'} onClick={() => setView('melhorou-risco')} /><StatCard inferred label="Venceram SLA" value={result.counts.venceramSLA} note="Passaram para vencido" tone="amber" active={view === 'venceu-sla'} onClick={() => setView('venceu-sla')} /><StatCard inferred label="Saíram de aguardando" value={result.counts.sairamAguardando} note="Deixaram o estado de espera" tone="blue" active={view === 'saiu-aguardando'} onClick={() => setView('saiu-aguardando')} /><StatCard inferred label="Resolvidos no novo" value={result.counts.resolvidosNoNovo} note="Passaram para encerrado" tone="green" active={view === 'resolvido'} onClick={() => setView('resolvido')} /></MetricGrid></section>
 
         <section className="card overflow-hidden p-0">
           <div className="border-b px-5 py-4"><h2 className="font-bold">Alterações detectadas</h2><p className="mt-1 text-xs text-muted">{items.length} resultado(s). Clique em uma linha para abrir os snapshots completos.</p></div>

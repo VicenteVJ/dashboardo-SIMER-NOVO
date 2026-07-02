@@ -42,7 +42,7 @@ export default function Layout() {
               {health.hasCurrentFile && <button className="btn-secondary px-3 text-red-600" title="Remover Excel" disabled={loading} onClick={removeCurrent}><span className="md:hidden">×</span><span className="hidden md:inline">Remover</span></button>}
             </div>
           </header>
-          <main className="w-full p-3 sm:p-4"><Outlet /></main>
+          <main className="mx-auto w-full max-w-[1500px] p-3 sm:p-4 lg:px-5"><Outlet /></main>
         </div>
         <Toast />
       </div>
