@@ -56,7 +56,7 @@ Variáveis opcionais podem ser configuradas com base no arquivo `.env.example`:
 - `CLIENT_ORIGIN` e `ALLOWED_ORIGINS`: origens adicionais permitidas pelo CORS, com múltiplos valores separados por vírgula;
 - `VITE_API_URL`: URL absoluta da API quando frontend e backend estiverem em hosts diferentes; no Netlify deve ficar vazia para usar `/api/*` no mesmo domínio;
 - `STORAGE_DIR`: diretório alternativo para o cache no modo filesystem local e nos testes;
-- `NETLIFY` ou `NETLIFY_DEV`: quando presentes, habilitam o Netlify Blobs, salvo se `STORAGE_DIR` tiver sido definido explicitamente;
+- `NETLIFY`, `NETLIFY_DEV` ou o marcador interno da Function: habilitam automaticamente o Netlify Blobs, salvo se `STORAGE_DIR` tiver sido definido explicitamente;
 - `NETLIFY_BLOBS_STORE`: nome opcional do store; o padrão é `simer-dashboard-cache`.
 
 > O projeto não carrega `.env` automaticamente. Defina as variáveis no ambiente do processo ou adicione um carregador de segredos na plataforma de implantação.
@@ -92,11 +92,22 @@ O arquivo `netlify.toml` da raiz já contém build, diretório de Functions e re
 
 - Base directory: vazio;
 - Package directory: vazio;
-- Build command: `npm --prefix client run build`;
+- Build command: `npm run build`;
 - Publish directory: `client/dist`;
 - Functions directory: `netlify/functions`.
 
-O frontend é publicado como SPA e `/api/*` é reescrito para a Function `api`. Não é necessário backend externo nem banco de dados. O contexto de acesso ao Netlify Blobs é fornecido automaticamente à Function pelo Netlify.
+O frontend é publicado como SPA e `/api/*` é reescrito para a Function `api`. Essa Function reutiliza `server/app.js`, portanto as rotas Express, o `multer` em memória e o processamento com `xlsx` também são executados no Netlify. Não é necessário backend externo nem banco de dados. O contexto de acesso ao Netlify Blobs é conectado antes de o Express ser carregado.
+
+Não faça deploy manual apenas da pasta `client/dist`: esse método publica somente os arquivos estáticos e deixa `/.netlify/functions/api` inexistente. Use o repositório conectado ao Netlify ou a CLI na raiz:
+
+```bash
+npm install
+npx netlify login
+npx netlify link
+npx netlify deploy --build --prod --filter @simer/client
+```
+
+Após o deploy, `GET /api/health` deve responder JSON com `storageProvider: "netlify-blobs"`. O upload síncrono de arquivos binários em Functions possui limite efetivo próximo de 4,5 MB por causa da codificação Base64; o frontend usa 4 MB como margem segura e mostra uma mensagem antes do envio.
 
 O domínio oficial `https://dashboardo-simer-novo.netlify.app`, a variante sem o segundo “o”, localhost e deploy previews/branch deploys desses sites já são permitidos pelo CORS. Variáveis são opcionais e servem para acrescentar outros hosts, por exemplo:
 
@@ -105,6 +116,14 @@ CLIENT_ORIGIN=https://dashboardo-simer-novo.netlify.app,https://dashboard-simer-
 ```
 
 No painel do Netlify, deixe **Base directory** e **Package directory** vazios para que o build encontre tanto o frontend quanto `netlify/functions` e as dependências da raiz.
+
+Para testar o mesmo fluxo localmente:
+
+```bash
+npm run dev
+curl http://localhost:8888/api/health
+curl -F "file=@./caminho/arquivo.xlsx" http://localhost:8888/api/upload/current
+```
 
 ## Endpoints
 

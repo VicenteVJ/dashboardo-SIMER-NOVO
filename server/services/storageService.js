@@ -7,7 +7,14 @@ const serverDir = path.join(projectRoot, 'server')
 export const storageDir = process.env.STORAGE_DIR ? path.resolve(process.env.STORAGE_DIR) : path.resolve(serverDir, 'storage')
 
 // STORAGE_DIR is an explicit filesystem override used by the local test suite too.
-export const isNetlify = !process.env.STORAGE_DIR && Boolean(process.env.NETLIFY || process.env.NETLIFY_DEV)
+// NETLIFY_FUNCTION is set by the Lambda entry point before this module is loaded.
+export const isNetlify = !process.env.STORAGE_DIR && Boolean(
+  process.env.NETLIFY_FUNCTION ||
+  process.env.NETLIFY ||
+  process.env.NETLIFY_DEV ||
+  process.env.AWS_LAMBDA_FUNCTION_NAME
+)
+export const storageProvider = isNetlify ? 'netlify-blobs' : 'filesystem'
 
 const STORE_NAME = process.env.NETLIFY_BLOBS_STORE || 'simer-dashboard-cache'
 const keys = {

@@ -121,6 +121,7 @@ test('remoção limpa Excel, JSON e estado em memória', async () => {
     const health = await (await fetch(`${url}/api/health`)).json()
     assert.equal(health.hasCurrentFile, false)
     assert.equal(health.ticketCount, 0)
+    assert.equal(health.storageProvider, 'filesystem')
     await assert.rejects(fs.access(path.join(storageDir, 'current.xlsx')))
     await assert.rejects(fs.access(path.join(storageDir, 'current.json')))
     await assert.rejects(fs.access(path.join(storageDir, 'current.raw.json')))

@@ -1,12 +1,20 @@
 import { connectLambda } from '@netlify/blobs'
 import serverless from 'serverless-http'
-import app from '../../server/app.js'
 
-const serverlessHandler = serverless(app)
+let serverlessHandlerPromise
+
+function getServerlessHandler() {
+  if (!serverlessHandlerPromise) {
+    process.env.NETLIFY_FUNCTION = 'true'
+    serverlessHandlerPromise = import('../../server/app.js')
+      .then(({ default: app }) => serverless(app))
+  }
+  return serverlessHandlerPromise
+}
 
 export async function handler(event, context) {
-  // serverless-http uses Netlify's Lambda-compatible event shape. Connecting it
-  // here makes the Blobs context available before the Express request is handled.
+  // Lambda compatibility mode requires the Blobs context before getStore is used.
   if (event.blobs) connectLambda(event)
+  const serverlessHandler = await getServerlessHandler()
   return serverlessHandler(event, context)
 }

@@ -7,6 +7,7 @@ import exportRouter from './routes/export.js'
 import ticketsRouter from './routes/tickets.js'
 import uploadRouter from './routes/upload.js'
 import { filterTickets, summarize } from './services/filterService.js'
+import { storageProvider } from './services/storageService.js'
 import { getCurrent, hydrateCurrent } from './state.js'
 
 const app = express()
@@ -44,6 +45,7 @@ app.get('/api/health', (_request, response) => {
     fileName: current.fileName,
     uploadedAt: current.uploadedAt,
     ticketCount: current.tickets.length,
+    storageProvider,
     cache: {
       loaded: Boolean(current.fileName),
       filename: current.fileName,
