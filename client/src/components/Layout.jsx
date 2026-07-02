@@ -28,8 +28,8 @@ export default function Layout() {
       <div className="min-h-screen bg-canvas dark:bg-slate-950">
         <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         {sidebarOpen && <button aria-label="Fechar menu" className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick={() => setSidebarOpen(false)} />}
-        <div className="lg:pl-[236px]">
-          <header className="sticky top-0 z-30 border-b border-white/70 bg-canvas/90 px-3 py-2 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/90 sm:px-4">
+        <div className="lg:pl-[220px]">
+          <header className="sticky top-0 z-30 border-b border-white/70 bg-canvas/90 px-3 py-1.5 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/90 sm:px-4">
             <div className="flex w-full items-center gap-2">
               <button className="btn-secondary px-3 lg:hidden" onClick={() => setSidebarOpen(true)}>☰</button>
               <div className="min-w-0 flex-1">
@@ -42,7 +42,7 @@ export default function Layout() {
               {health.hasCurrentFile && <button className="btn-secondary px-3 text-red-600" title="Remover Excel" disabled={loading} onClick={removeCurrent}><span className="md:hidden">×</span><span className="hidden md:inline">Remover</span></button>}
             </div>
           </header>
-          <main className="mx-auto w-full max-w-[1500px] p-3 sm:p-4 lg:px-5"><Outlet /></main>
+          <main className="mx-auto w-full max-w-[1600px] p-2.5 sm:p-3 lg:px-4"><Outlet /></main>
         </div>
         <Toast />
       </div>

@@ -4,18 +4,18 @@ export default function StatCard({ label, value, note, tone = 'blue', onClick, a
     amber: 'from-amber-400 to-orange-500', green: 'from-emerald-400 to-green-600', slate: 'from-slate-500 to-slate-700'
   }
   const densities = {
-    default: 'min-h-[112px] max-w-[340px] p-4',
-    compact: 'min-h-[96px] max-w-[320px] p-3',
-    mini: 'min-h-[76px] max-w-[240px] p-3'
+    default: 'min-h-[92px] p-3',
+    compact: 'min-h-[78px] p-2.5',
+    mini: 'min-h-[64px] p-2.5'
   }
   const Tag = onClick ? 'button' : 'div'
   return (
     <Tag aria-pressed={onClick ? active : undefined} onClick={onClick} className={`relative overflow-hidden rounded-xl border border-white/80 bg-white text-left shadow-card dark:border-slate-800 dark:bg-slate-900 ${densities[density] || densities.compact} ${onClick ? 'w-full transition hover:-translate-y-0.5 hover:shadow-lg' : ''} ${active ? 'ring-2 ring-brand ring-offset-2 dark:ring-offset-slate-950' : ''}`}>
-      <div className={`absolute -right-3 -top-3 h-14 w-14 rounded-full bg-gradient-to-br opacity-10 ${tones[tone]}`} />
-      <div className="flex items-start justify-between gap-2"><p className="text-[10px] font-bold uppercase tracking-wide text-muted">{label}</p>{inferred && <span className="cursor-help text-[10px] text-violet" title="Indicador inferido automaticamente pelo sistema com base nos dados disponíveis no Excel.">ⓘ</span>}</div>
-      <strong className="mt-1.5 block text-2xl font-extrabold leading-none">{value}</strong>
-      {note && <p className="mt-1 text-[10px] leading-4 text-muted">{note}</p>}
-      <span className={`absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r ${tones[tone]}`} />
+      <div className={`absolute -right-3 -top-3 h-12 w-12 rounded-full bg-gradient-to-br opacity-10 ${tones[tone]}`} />
+      <div className="flex items-start justify-between gap-1.5"><p className="text-[9px] font-bold uppercase leading-3 tracking-wide text-muted">{label}</p>{inferred && <span className="cursor-help text-[9px] text-violet" title="Indicador inferido automaticamente pelo sistema com base nos dados disponíveis no Excel.">ⓘ</span>}</div>
+      <strong className="mt-1 block text-[22px] font-extrabold leading-none">{value}</strong>
+      {note && <p className="mt-0.5 truncate text-[9px] leading-3 text-muted" title={note}>{note}</p>}
+      <span className={`absolute bottom-0 left-0 h-0.5 w-full bg-gradient-to-r ${tones[tone]}`} />
     </Tag>
   )
 }

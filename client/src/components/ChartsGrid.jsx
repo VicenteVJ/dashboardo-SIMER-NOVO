@@ -5,7 +5,7 @@ import { aggregate } from '../utils/tickets'
 const COLORS = ['#4f6df5', '#9b7cf6', '#22c55e', '#f59e0b', '#ef4444', '#06b6d4', '#ec4899', '#64748b']
 
 function ChartCard({ title, subtitle, children }) {
-  return <div className="card min-h-[276px]"><div><h3 className="text-sm font-bold">{title}</h3><p className="mt-0.5 text-[10px] text-muted">{subtitle}</p></div><div className="mt-3 h-52">{children}</div></div>
+  return <div className="card min-h-[236px]"><div><h3 className="text-sm font-bold">{title}</h3><p className="mt-0.5 text-[10px] text-muted">{subtitle}</p></div><div className="mt-2 h-44">{children}</div></div>
 }
 
 function EmptyChart() {
@@ -36,7 +36,7 @@ function ChartsGrid({ tickets, onFilter }) {
     clients: aggregate(tickets, 'clientePessoa', true, 8)
   }), [tickets])
   return (
-    <div className="grid gap-4 xl:grid-cols-2">
+    <div className="grid gap-3 xl:grid-cols-2">
       <ChartCard title="Evolução de tickets por mês" subtitle="Clique em uma barra para filtrar o período.">
         <BarView data={monthly} onClick={(name) => { const [ano, mes] = name.split('-'); onFilter({ ano, mes: String(Number(mes)) }) }} />
       </ChartCard>

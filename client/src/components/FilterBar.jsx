@@ -10,7 +10,7 @@ function unique(tickets, field) {
 function Select({ label, value, options, onChange }) {
   return (
     <label className="min-w-0">
-      <span className="mb-1 block text-[11px] font-bold uppercase text-muted">{label}</span>
+      <span className="mb-0.5 block text-[10px] font-bold uppercase text-muted">{label}</span>
       <select className="field" value={value} onChange={(event) => onChange(event.target.value)}>
         <option value="">Todos</option>
         {options.map((option) => <option key={String(option.value ?? option)} value={option.value ?? option}>{option.label ?? option}</option>)}
@@ -25,7 +25,7 @@ function StatusSelect({ options, value, onChange }) {
   return (
     <details className="relative min-w-0">
       <summary className="list-none">
-        <span className="mb-1 block text-[11px] font-bold uppercase text-muted">Status</span>
+        <span className="mb-0.5 block text-[10px] font-bold uppercase text-muted">Status</span>
         <div className="field cursor-pointer truncate">{selected.length ? `${selected.length} selecionado(s)` : 'Todos'}</div>
       </summary>
       <div className="absolute left-0 top-full z-30 mt-1 max-h-64 min-w-64 overflow-auto rounded-xl border bg-white p-2 shadow-xl dark:bg-slate-900">
@@ -41,19 +41,19 @@ export default function FilterBar({ tickets, filters, onChange, onClear, onExpor
   const years = [...new Set(tickets.map((ticket) => ticket.mesAno?.slice(0, 4)).filter((year) => /^\d{4}$/.test(year)))].sort().reverse()
   return (
     <div className="card">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
           <h2 className="font-bold">Filtros da análise</h2>
-          <p className="mt-1 text-xs text-muted">Combine os campos para refinar indicadores, gráficos e tabela.</p>
+          <p className="mt-0.5 text-[10px] text-muted">Combine os campos para refinar indicadores, gráficos e tabela.</p>
         </div>
         <div className="flex gap-2">
           <button className="btn-secondary" onClick={onExport}>Exportar base filtrada</button>
           <button className="btn-secondary" onClick={onClear}>Limpar filtros</button>
         </div>
       </div>
-      <div className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
-        <label className="sm:col-span-2">
-          <span className="mb-1 block text-[11px] font-bold uppercase text-muted">Busca textual</span>
+      <div className="mt-2 grid grid-cols-2 gap-2 lg:grid-cols-4 xl:grid-cols-12">
+        <label className="col-span-2">
+          <span className="mb-0.5 block text-[10px] font-bold uppercase text-muted">Busca textual</span>
           <input className="field" placeholder="Número, assunto, cliente…" value={filters.search} onChange={(event) => set('search')(event.target.value)} />
         </label>
         <StatusSelect value={filters.status} options={unique(tickets, 'status')} onChange={set('status')} />
@@ -65,13 +65,13 @@ export default function FilterBar({ tickets, filters, onChange, onClear, onExpor
         <Select label="Prioridade" value={filters.prioridade} options={[{ value: 'true', label: 'Priorizados' }, { value: 'false', label: 'Não priorizados' }]} onChange={set('prioridade')} />
         <Select label="Ano" value={filters.ano} options={years} onChange={set('ano')} />
         <Select label="Mês" value={filters.mes} options={MONTHS.map(([value, label]) => ({ value, label }))} onChange={set('mes')} />
-        <label className="flex items-end gap-2 pb-2.5 text-sm font-semibold">
-          <input type="checkbox" className="h-4 w-4 accent-brand" checked={filters.somenteAberto} onChange={(event) => set('somenteAberto')(event.target.checked)} /> Somente em aberto
+        <label className="flex items-end gap-1.5 whitespace-nowrap pb-1.5 text-[9px] font-semibold">
+          <input type="checkbox" className="h-4 w-4 accent-brand" checked={filters.somenteAberto} onChange={(event) => set('somenteAberto')(event.target.checked)} /> Só abertos
         </label>
       </div>
-      <details className="mt-3 border-t pt-3">
+      <details className="mt-2 border-t pt-2">
         <summary className="cursor-pointer text-xs font-bold text-brand">Filtros de governança e ITIL <span className="ml-1 text-[10px] font-normal text-muted">— campos inferidos pelo sistema</span></summary>
-        <div className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="mt-2 grid grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-5">
           <Select label="Status gerencial" value={filters.statusGerencial} options={unique(tickets, 'statusGerencial')} onChange={set('statusGerencial')} />
           <Select label="Tipo ITIL" value={filters.tipoITIL} options={unique(tickets, 'tipoITIL')} onChange={set('tipoITIL')} />
           <Select label="Prioridade gerencial" value={filters.prioridadeGerencial} options={['P1', 'P2', 'P3', 'P4']} onChange={set('prioridadeGerencial')} />
@@ -81,7 +81,7 @@ export default function FilterBar({ tickets, filters, onChange, onClear, onExpor
           <Select label="Responsável gerencial" value={filters.responsavelGerencial} options={unique(tickets, 'responsavelGerencial')} onChange={set('responsavelGerencial')} />
           <Select label="Dependência externa" value={filters.dependenciaExterna} options={[{ value: 'true', label: 'Sim' }, { value: 'false', label: 'Não' }]} onChange={set('dependenciaExterna')} />
           <Select label="Sem atualização" value={filters.semAtualizacao} options={[{ value: 'true', label: 'Sim' }, { value: 'false', label: 'Não' }]} onChange={set('semAtualizacao')} />
-          <div className="sm:col-span-2"><Select label="Motivo de espera inferido" value={filters.motivoEsperaInferido} options={unique(tickets, 'motivoEsperaInferido')} onChange={set('motivoEsperaInferido')} /></div>
+          <div className="col-span-2"><Select label="Motivo de espera inferido" value={filters.motivoEsperaInferido} options={unique(tickets, 'motivoEsperaInferido')} onChange={set('motivoEsperaInferido')} /></div>
         </div>
       </details>
     </div>
